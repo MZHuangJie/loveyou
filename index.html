@@ -45,6 +45,8 @@
             text-shadow: 0 0 10px rgba(255, 183, 197, 0.8);
             opacity: 0;
             transition: opacity 0.5s ease;
+            white-space: nowrap; /* 禁止文字换行 */
+            padding: 0 20px; /* 防止边缘裁剪 */
         }
 
         .image-container {
@@ -120,6 +122,13 @@
         .grow {
             transform: scale(1.5);
             transition: transform 0.3s ease;
+        }
+
+        /* 响应式调整：小屏幕缩小字体 */
+        @media (max-width: 375px) {
+            .message {
+                font-size: 22px; /* 手机屏幕缩小字体 */
+            }
         }
     </style>
 </head>
