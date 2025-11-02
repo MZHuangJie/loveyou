@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互动选择应用</title>
+    <script src="https://cdn.tailwindcss.com/3.3.3"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .app-container {
+            max-width: 400px;
+            width: 100%;
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-container {
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+            position: relative;
+            transition: opacity 0.3s ease;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .buttons-container {
+            padding: 20px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .button {
+            flex: 1;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            outline: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .button:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .button:active:before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .yes-button {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .no-button {
+            background: #f3f4f6;
+            color: #374151;
+            border: 2px solid #e5e7eb;
+        }
+
+        .yes-button.grow {
+            transform: scale(1.5);
+            z-index: 10;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        .footer {
+            padding: 15px;
+            text-align: center;
+            font-size: 12px;
+            color: #9ca3af;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .footer a {
+            color: #4f46e5;
+            text-decoration: none;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 480px) {
+            .app-container {
+                border-radius: 20px;
+                max-width: 100%;
+            }
+            
+            .image-container {
+                height: 250px;
+            }
+            
+            .buttons-container {
+                padding: 15px;
+                gap: 12px;
+            }
+            
+            .button {
+                padding: 12px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 图片区域 -->
+        <div class="image-container" id="imageContainer">
+            <img id="mainImage" src="https://s.coze.cn/image/QPq3Vh0o1UQ/" alt="初始图片" class="fade-in">
+        </div>
+        
+        <!-- 按钮区域 -->
+        <div class="buttons-container">
+            <button id="yesButton" class="button yes-button">可以</button>
+            <button id="noButton" class="button no-button">不要</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取DOM元素
+            const yesButton = document.getElementById('yesButton');
+            const noButton = document.getElementById('noButton');
+            const mainImage = document.getElementById('mainImage');
+            const imageContainer = document.getElementById('imageContainer');
+            
+            // 配置列表
+            const configList = [
+                { text: '??你认真的吗...', image: 'https://s.coze.cn/image/ktUG-2abvtU/' },
+                { text: '要不再想想?', image: 'https://s.coze.cn/image/_b3oDz5ujjM/' },
+                { text: '不许选这个!', image: 'https://s.coze.cn/image/JSkkXYoEpZg/' }
+                { text: '我会很伤心的...', image: 'https://s.coze.cn/image/JSkkXYoEpZg/' }
+                { text: '不行:(', image: 'https://s.coze.cn/image/JSkkXYoEpZg/' }
+            ];
+            
+            // 成功图片
+            const successImage = 'https://s.coze.cn/image/tmoFMVPwIMo/';
+            
+            // 当前配置项索引
+            let currentIndex = 0;
+            // 是否已经达到成功状态
+            let isSuccess = false;
+            
+            // 点击'不要'按钮的处理函数
+            noButton.addEventListener('click', function() {
+                if (isSuccess) return;
+                
+                // 切换到下一个配置项
+                currentIndex = (currentIndex + 1) % configList.length;
+                
+                // 更新'不要'按钮文字
+                noButton.textContent = configList[currentIndex].text;
+                
+                // 添加按钮动画效果
+                noButton.classList.add('slide-in');
+                setTimeout(() => {
+                    noButton.classList.remove('slide-in');
+                }, 300);
+                
+                // 更新图片
+                updateImage(configList[currentIndex].image);
+                
+                // '可以'按钮尺寸增大50%
+                yesButton.classList.add('grow');
+                setTimeout(() => {
+                    yesButton.classList.remove('grow');
+                }, 300);
+            });
+            
+            // 点击'可以'按钮的处理函数
+            yesButton.addEventListener('click', function() {
+                if (isSuccess) return;
+                
+                // 标记为成功状态
+                isSuccess = true;
+                
+                // 更新图片为成功图片
+                updateImage(successImage);
+                
+                // 更新按钮文字
+                yesButton.textContent = '成功!';
+                noButton.textContent = '太棒了';
+                
+                // 禁用按钮
+                setTimeout(() => {
+                    yesButton.disabled = true;
+                    noButton.disabled = true;
+                }, 300);
+            });
+            
+            // 更新图片的函数
+            function updateImage(imageSrc) {
+                // 添加淡出效果
+                mainImage.style.opacity = '0';
+                
+                // 图片加载完成后显示
+                setTimeout(() => {
+                    mainImage.src = imageSrc;
+                    mainImage.onload = function() {
+                        mainImage.style.opacity = '1';
+                    };
+                }, 300);
+            }
+        });
+    </script>
+</body>
+</html>
