@@ -9,156 +9,133 @@
     <style>
         body {
             font-family: 'Noto Sans SC', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            background: #ffe6ea;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            margin: 0;
+            overflow: hidden;
         }
 
         .app-container {
-            max-width: 400px;
+            max-width: 800px;
             width: 100%;
-            background: white;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e63946;
+            margin-bottom: 30px;
+        }
+
+        .message {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 28px;
+            font-weight: bold;
+            color: #e63946;
+            text-shadow: 0 0 10px rgba(255, 183, 197, 0.8);
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
 
         .image-container {
-            width: 100%;
-            height: 300px;
-            overflow: hidden;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 40px;
             position: relative;
-            transition: opacity 0.3s ease;
         }
 
         .image-container img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
+            object-fit: contain;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            14% { transform: scale(1.1); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.1); }
+            70% { transform: scale(1); }
         }
 
         .buttons-container {
-            padding: 20px;
             display: flex;
-            gap: 15px;
+            gap: 20px;
+            justify-content: center;
+            transition: opacity 0.5s ease;
         }
 
         .button {
-            flex: 1;
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 16px;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 18px;
             font-weight: 600;
-            text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
             border: none;
             outline: none;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .button:before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        .button:active:before {
-            width: 300px;
-            height: 300px;
         }
 
         .yes-button {
-            background: #4f46e5;
+            background: #e63946;
             color: white;
+            box-shadow: 0 4px 14px 0 rgba(230, 57, 70, 0.4);
         }
 
         .no-button {
-            background: #f3f4f6;
-            color: #374151;
-            border: 2px solid #e5e7eb;
+            background: #f1faee;
+            color: #1d3557;
+            box-shadow: 0 4px 14px 0 rgba(29, 53, 87, 0.1);
         }
 
-        .yes-button.grow {
+        .yes-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px 0 rgba(230, 57, 70, 0.5);
+        }
+
+        .no-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px 0 rgba(29, 53, 87, 0.2);
+        }
+
+        #fireworksCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .grow {
             transform: scale(1.5);
-            z-index: 10;
-        }
-
-        .fade-in {
-            animation: fadeIn 0.5s ease forwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .slide-in {
-            animation: slideIn 0.3s ease forwards;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
-        }
-
-        .footer {
-            padding: 15px;
-            text-align: center;
-            font-size: 12px;
-            color: #9ca3af;
-            border-top: 1px solid #f3f4f6;
-        }
-
-        .footer a {
-            color: #4f46e5;
-            text-decoration: none;
-        }
-
-        /* 响应式设计 */
-        @media (max-width: 480px) {
-            .app-container {
-                border-radius: 20px;
-                max-width: 100%;
-            }
-            
-            .image-container {
-                height: 250px;
-            }
-            
-            .buttons-container {
-                padding: 15px;
-                gap: 12px;
-            }
-            
-            .button {
-                padding: 12px;
-                font-size: 14px;
-            }
+            transition: transform 0.3s ease;
         }
     </style>
 </head>
 <body>
+    <canvas id="fireworksCanvas"></canvas>
+    
     <div class="app-container">
-        <!-- 图片区域 -->
-        <div class="image-container" id="imageContainer">
-            <img id="mainImage" src="https://37tt.github.io/tang-love/images/heart.png" alt="初始图片" class="fade-in">
+        <div class="message" id="message">!!!喜欢你!! ( >᎑<)♡︎ᐝ</div>
+        
+        <h1 class="title" id="title">可以成为我的恋人吗?</h1>
+        
+        <div class="image-container">
+             <img id="mainImage" src="https://37tt.github.io/tang-love/images/heart.png" alt="初始图片" class="fade-in">
         </div>
         
-        <!-- 按钮区域 -->
-        <div class="buttons-container">
+        <div class="buttons-container" id="buttonsContainer">
             <button id="yesButton" class="button yes-button">可以</button>
             <button id="noButton" class="button no-button">不要</button>
         </div>
@@ -166,13 +143,23 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 获取DOM元素
             const yesButton = document.getElementById('yesButton');
             const noButton = document.getElementById('noButton');
             const mainImage = document.getElementById('mainImage');
-            const imageContainer = document.getElementById('imageContainer');
+            const buttonsContainer = document.getElementById('buttonsContainer');
+            const title = document.getElementById('title');
+            const message = document.getElementById('message');
+            const canvas = document.getElementById('fireworksCanvas');
+            const ctx = canvas.getContext('2d');
             
-            // 配置列表
+            // 设置Canvas尺寸
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
             const configList = [
                 { text: '??你认真的吗...', image: 'https://37tt.github.io/tang-love/images/shocked.png' },
                 { text: '要不再想想?', image: 'https://37tt.github.io/tang-love/images/think.png' },
@@ -181,70 +168,154 @@
                 { text: '不行:(', image: 'https://37tt.github.io/tang-love/images/crying.png' },
             ];
             
-            // 成功图片
             const successImage = 'https://raw.githubusercontent.com/MZHuangJie/loveyou/refs/heads/main/images/1.jpg';
-            
-            // 当前配置项索引
             let currentIndex = 0;
-            // 是否已经达到成功状态
             let isSuccess = false;
             
-            // 点击'不要'按钮的处理函数
-            noButton.addEventListener('click', function() {
-                if (isSuccess) return;
+            // 烟花特效实现
+            class Firework {
+                constructor() {
+                    this.reset();
+                }
                 
-                // 切换到下一个配置项
-                currentIndex = (currentIndex + 1) % configList.length;
+                reset() {
+                    this.x = canvas.width * Math.random();
+                    this.y = canvas.height;
+                    this.velocityY = -5 - Math.random() * 5;
+                    this.velocityX = (Math.random() - 0.5) * 4;
+                    this.gravity = 0.1;
+                    this.radius = 2;
+                    this.hue = Math.random() * 360;
+                    this.exploded = false;
+                    this.particles = [];
+                }
                 
-                // 更新'不要'按钮文字
-                noButton.textContent = configList[currentIndex].text;
+                update() {
+                    if (!this.exploded) {
+                        this.velocityY += this.gravity;
+                        this.y += this.velocityY;
+                        this.x += this.velocityX;
+                        
+                        if (this.velocityY >= -2) {
+                            this.explode();
+                        }
+                        
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = `hsl(${this.hue}, 100%, 50%)`;
+                        ctx.fill();
+                    } else {
+                        for (let i = this.particles.length - 1; i >= 0; i--) {
+                            this.particles[i].update();
+                            if (this.particles[i].alpha <= 0) {
+                                this.particles.splice(i, 1);
+                            }
+                        }
+                        
+                        if (this.particles.length === 0) {
+                            this.reset();
+                        }
+                    }
+                }
                 
-                // 添加按钮动画效果
-                noButton.classList.add('slide-in');
-                setTimeout(() => {
-                    noButton.classList.remove('slide-in');
-                }, 300);
-                
-                // 更新图片
-                updateImage(configList[currentIndex].image);
-                
-                // '可以'按钮尺寸增大50%
-                yesButton.classList.add('grow');
-                setTimeout(() => {
-                    yesButton.classList.remove('grow');
-                }, 300);
-            });
+                explode() {
+                    this.exploded = true;
+                    const particleCount = 100;
+                    for (let i = 0; i < particleCount; i++) {
+                        this.particles.push(new Particle(this.x, this.y, this.hue));
+                    }
+                }
+            }
             
-            // 点击'可以'按钮的处理函数
+            class Particle {
+                constructor(x, y, hue) {
+                    this.x = x;
+                    this.y = y;
+                    this.velocityX = (Math.random() - 0.5) * 8;
+                    this.velocityY = (Math.random() - 0.5) * 8;
+                    this.radius = 2 + Math.random() * 2;
+                    this.alpha = 1;
+                    this.decay = 0.01 + Math.random() * 0.02;
+                    this.hue = hue;
+                }
+                
+                update() {
+                    this.velocityY += 0.1;
+                    this.x += this.velocityX;
+                    this.y += this.velocityY;
+                    this.alpha -= this.decay;
+                    
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsla(${this.hue}, 100%, 50%, ${this.alpha})`;
+                    ctx.fill();
+                }
+            }
+            
+            const fireworks = [];
+            let animationId;
+            
+            function animateFireworks() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                if (Math.random() < 0.05) {
+                    fireworks.push(new Firework());
+                }
+                
+                for (let i = fireworks.length - 1; i >= 0; i--) {
+                    fireworks[i].update();
+                    if (fireworks[i].particles.length === 0 && fireworks[i].exploded) {
+                        fireworks.splice(i, 1);
+                    }
+                }
+                
+                animationId = requestAnimationFrame(animateFireworks);
+            }
+            
+            function stopFireworks() {
+                cancelAnimationFrame(animationId);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                fireworks.length = 0;
+            }
+            
+            // 点击"可以"按钮的处理函数
             yesButton.addEventListener('click', function() {
                 if (isSuccess) return;
                 
-                // 标记为成功状态
                 isSuccess = true;
+                // 启动烟花特效
+                animateFireworks();
                 
-                // 更新图片为成功图片
-                updateImage(successImage);
-                
-                // 更新按钮文字
-                yesButton.textContent = '成功!';
-                noButton.textContent = '太棒了';
-                
-                // 禁用按钮
+                // 3秒后结束烟花，更新界面
                 setTimeout(() => {
-                    yesButton.disabled = true;
-                    noButton.disabled = true;
-                }, 300);
+                    stopFireworks();
+                    updateImage(successImage);
+                    // 隐藏按钮和标题
+                    buttonsContainer.style.opacity = 0;
+                    title.style.opacity = 0;
+                    // 显示文字
+                    message.style.opacity = 1;
+                }, 3000);
             });
             
-            // 更新图片的函数
-            function updateImage(imageSrc) {
-                // 添加淡出效果
-                mainImage.style.opacity = '0';
+            // 点击"不要"按钮的处理函数
+            noButton.addEventListener('click', function() {
+                if (isSuccess) return;
                 
-                // 图片加载完成后显示
+                currentIndex = (currentIndex + 1) % configList.length;
+                noButton.textContent = configList[currentIndex].text;
+                updateImage(configList[currentIndex].image);
+                
+                yesButton.classList.add('grow');
+                yesButton.style.width = '160px';
+                setTimeout(() => yesButton.classList.remove('grow'), 300);
+            });
+            
+            function updateImage(imageSrc) {
+                mainImage.style.opacity = '0';
                 setTimeout(() => {
                     mainImage.src = imageSrc;
-                    mainImage.onload = function() {
+                    mainImage.onload = () => {
                         mainImage.style.opacity = '1';
                     };
                 }, 300);
